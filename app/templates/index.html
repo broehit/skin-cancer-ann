@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skin Cancer Risk Classifier</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+
+<body>
+
+    <!-- Background Decorators -->
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+
+    <div class="container glass-panel">
+        <header>
+            <i class="ph-fill ph-shield-check logo-icon"></i>
+            <h1>Skin Cancer Risk Classifier</h1>
+            <p>Upload a skin lesion image to get an AI-powered risk assessment using our Artificial Neural Network.</p>
+        </header>
+
+        <div class="upload-section">
+            <div class="drop-zone" id="drop-zone">
+                <input type="file" id="file-input" accept="image/*" hidden>
+                <div class="drop-content" id="drop-content">
+                    <i class="ph ph-upload-simple upload-icon"></i>
+                    <h3>Drag & drop an image here</h3>
+                    <p>or click to browse</p>
+                    <span class="file-info">Supports JPG, PNG</span>
+                </div>
+                <img id="image-preview" src="" alt="Preview" class="hidden">
+            </div>
+
+            <button id="predict-btn" class="primary-btn" disabled>
+                <span>Analyze Risk</span>
+                <i class="ph-bold ph-arrow-right"></i>
+            </button>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loading" class="loading-container hidden">
+            <div class="spinner"></div>
+            <p>Extracting features & evaluating ANN model...</p>
+        </div>
+
+        <!-- Result State -->
+        <div id="result-section" class="result-container hidden">
+            <h2>Analysis Complete</h2>
+            <div class="result-card">
+                <div class="result-row">
+                    <span class="label">Risk Level</span>
+                    <span id="risk-val" class="value">--</span>
+                </div>
+                <div class="result-row">
+                    <span class="label">Confidence Score</span>
+                    <div class="confidence-wrapper">
+                        <span id="conf-val" class="value">--%</span>
+                        <div class="progress-bar">
+                            <div id="conf-fill" class="progress-fill"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button id="reset-btn" class="secondary-btn">Test Another Image</button>
+        </div>
+    </div>
+
+    <!-- Authenticity Footer -->
+    <div class="app-footer">
+        <p>Developed with <i class="ph-fill ph-heart" style="color: var(--danger); vertical-align: middle;"></i> by
+            <strong>Rohit Manal</strong></p>
+    </div>
+
+    <!-- Script to handle upload and UI logic -->
+    <script>
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const imagePreview = document.getElementById('image-preview');
+        const dropContent = document.getElementById('drop-content');
+        const predictBtn = document.getElementById('predict-btn');
+
+        const loadingSection = document.getElementById('loading');
+        const resultSection = document.getElementById('result-section');
+        const riskVal = document.getElementById('risk-val');
+        const confVal = document.getElementById('conf-val');
+        const confFill = document.getElementById('conf-fill');
+        const resetBtn = document.getElementById('reset-btn');
+
+        let selectedFile = null;
+
+        // --- Drag & Drop Handlers ---
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            if (e.dataTransfer.files.length > 0) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                handleFile(fileInput.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            if (!file.type.startsWith('image/')) {
+                alert('Please upload an image file.');
+                return;
+            }
+            selectedFile = file;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imagePreview.src = e.target.result;
+                imagePreview.classList.remove('hidden');
+                dropContent.classList.add('hidden');
+                predictBtn.disabled = false;
+            };
+            reader.readAsDataURL(file);
+
+            // Hide previous results
+            resultSection.classList.add('hidden');
+        }
+
+        // --- Prediction ---
+        predictBtn.addEventListener('click', async () => {
+            if (!selectedFile) return;
+
+            // UI changes
+            predictBtn.classList.add('hidden');
+            loadingSection.classList.remove('hidden');
+            resultSection.classList.add('hidden');
+
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+
+            try {
+                // Simulate min loading time to let user read the text (looks more professional)
+                const fetchPromise = fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const minWaitPromise = new Promise(resolve => setTimeout(resolve, 1500));
+
+                const [response] = await Promise.all([fetchPromise, minWaitPromise]);
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to analyze image');
+                }
+
+                showResult(data.risk_level, data.confidence);
+
+            } catch (error) {
+                alert('Error: ' + error.message);
+                predictBtn.classList.remove('hidden');
+            } finally {
+                loadingSection.classList.add('hidden');
+            }
+        });
+
+        function showResult(riskLevel, confidence) {
+            resultSection.classList.remove('hidden');
+
+            riskVal.textContent = riskLevel;
+            confVal.textContent = confidence.toFixed(2) + '%';
+
+            // Animate progress bar
+            setTimeout(() => {
+                confFill.style.width = confidence + '%';
+            }, 100);
+
+            // Styling based on risk
+            if (riskLevel.toLowerCase().includes('high risk')) {
+                riskVal.style.color = 'var(--danger)';
+                confFill.style.background = 'var(--danger)';
+            } else {
+                riskVal.style.color = 'var(--success)';
+                confFill.style.background = 'var(--success)';
+            }
+        }
+
+        // --- Reset ---
+        resetBtn.addEventListener('click', () => {
+            selectedFile = null;
+            fileInput.value = '';
+            imagePreview.src = '';
+
+            imagePreview.classList.add('hidden');
+            dropContent.classList.remove('hidden');
+            predictBtn.classList.remove('hidden');
+            predictBtn.disabled = true;
+            resultSection.classList.add('hidden');
+            confFill.style.width = '0%';
+        });
+    </script>
+</body>
+
+</html>
