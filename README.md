@@ -3,7 +3,7 @@ title: Skin Cancer Risk Classifier (ANN)
 emoji: 🧠
 colorFrom: purple
 colorTo: blue
-sdk: docker
+sdk: gradio
 app_file: app.py
 pinned: false
 ---
