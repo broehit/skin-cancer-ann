@@ -11,9 +11,18 @@
 
 ---
 
-## 🌐 Live Demo
-The application is currently live and performing real-time inference using a tunneled production model.  
-👉 **[View the Live Demo Here](https://sure-readers-pupils-fairly.trycloudflare.com)**
+## 🌐 Live Demo & 24x7 Deployment
+
+The application is fully configured for a **24x7 cloud deployment** using [Render](https://render.com/).
+
+### How to Host it 24x7 for Free:
+1. **Fork or Push** this repository to your own GitHub account.
+2. Sign up on [Render.com](https://render.com) and click **New > Web Service**.
+3. Connect your GitHub repository.
+4. Render will automatically detect the provided `render.yaml` and `Procfile` configurations!
+5. Click **Deploy Web Service**. Once finished, Render provides a permanent `24x7` live URL (e.g. `https://skin-cancer-ann.onrender.com`).
+
+*(Note: The previous local Cloudflare tunnel `cloudflared.exe` is no longer required for production hosting).*
 
 ---
 
