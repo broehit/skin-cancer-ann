@@ -1,3 +1,13 @@
+---
+title: Skin Cancer Risk Classifier (ANN)
+emoji: 🧠
+colorFrom: purple
+colorTo: blue
+sdk: docker
+app_file: app.py
+pinned: false
+---
+
 <h1 align="center">Skin Cancer Risk Classifier (ANN)</h1>
 
 <div align="center">
