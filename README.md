@@ -4,7 +4,7 @@ emoji: 🧠
 colorFrom: purple
 colorTo: blue
 sdk: gradio
-app_file: app.py
+app_file: app/app.py
 pinned: false
 ---
 
