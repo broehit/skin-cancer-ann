@@ -13,16 +13,17 @@
 
 ## 🌐 Live Demo & 24x7 Deployment
 
-The application is fully configured for a **24x7 cloud deployment** using [Render](https://render.com/).
+The application is fully configured for a **24x7 cloud deployment** using [Hugging Face Spaces](https://huggingface.co/spaces). Due to the memory footprint of Artificial Neural Networks, Hugging Face's Docker Spaces (16GB RAM) represent the most reliable free hosting.
 
 ### How to Host it 24x7 for Free:
 1. **Fork or Push** this repository to your own GitHub account.
-2. Sign up on [Render.com](https://render.com) and click **New > Web Service**.
-3. Connect your GitHub repository.
-4. Render will automatically detect the provided `render.yaml` and `Procfile` configurations!
-5. Click **Deploy Web Service**. Once finished, Render provides a permanent `24x7` live URL (e.g. `https://skin-cancer-ann.onrender.com`).
+2. Sign up on [Hugging Face](https://huggingface.co/) and click **New Space**.
+3. Name your space, select **Docker** as the Space SDK, and choose **Blank**.
+4. Inside the Space settings, connect your GitHub repository or simply drag and drop the files.
+5. Hugging Face will automatically detect the provided `Dockerfile` configuration and build your container.
+6. Once the build finishes, your app will be securely hosted 24x7 with a permanent URL!
 
-*(Note: The previous local Cloudflare tunnel `cloudflared.exe` is no longer required for production hosting).*
+*(Note: The `render.yaml` and `Procfile` are still included in the repo if you wish to try Render or Heroku, but Hugging Face provides infinitely more reliable ML hosting).*
 
 ---
 
