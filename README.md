@@ -8,6 +8,12 @@ app_file: app.py
 pinned: false
 ---
 
+<p align="center">
+  <a href="https://huggingface.co/spaces/Broehit/skin-cancer-ann">
+    <img src="https://img.shields.io/badge/🚀 Live%20Demo-Hugging%20Face-yellow?style=for-the-badge">
+  </a>
+</p>
+
 <h1 align="center">Skin Cancer Risk Classifier (ANN)</h1>
 
 <div align="center">
