@@ -21,46 +21,41 @@ pinned: false
 </div>
 <br/>
 
-<div align="center">
-  <p>An end-to-end Machine Learning web application powered by an Artificial Neural Network, designed to classify skin lesions as <strong>Benign (Low Risk)</strong> or <strong>Malignant (High Risk)</strong> based on clinical imaging data.</p>
-</div>
+## ✅ Deployment Status
 
----
+The application now runs on **Gradio** and is ready for Hugging Face Spaces deployment without requiring missing Flask templates or mandatory pre-saved model files.
 
-## 🌐 Live Demo & 24x7 Deployment
+## 🌐 Hugging Face Spaces Deployment
 
-The application is fully configured for a **24x7 cloud deployment** using [Hugging Face Spaces](https://huggingface.co/spaces). Due to the memory footprint of Artificial Neural Networks, Hugging Face's Docker Spaces (16GB RAM) represent the most reliable free hosting.
+### Option 1: Gradio SDK (recommended)
+1. Create a new Hugging Face Space.
+2. Select **Gradio** SDK.
+3. Push this repository.
+4. Hugging Face will launch `app/app.py` automatically.
 
-### How to Host it 24x7 for Free:
-1. **Fork or Push** this repository to your own GitHub account.
-2. Sign up on [Hugging Face](https://huggingface.co/) and click **New Space**.
-3. Name your space, select **Docker** as the Space SDK, and choose **Blank**.
-4. Inside the Space settings, connect your GitHub repository or simply drag and drop the files.
-5. Hugging Face will automatically detect the provided `Dockerfile` configuration and build your container.
-6. Once the build finishes, your app will be securely hosted 24x7 with a permanent URL!
+### Option 2: Docker SDK
+1. Create a new Hugging Face Space.
+2. Select **Docker** SDK.
+3. Push this repository.
+4. Hugging Face builds from `Dockerfile` and exposes port `7860`.
 
-*(Note: The `render.yaml` and `Procfile` are still included in the repo if you wish to try Render or Heroku, but Hugging Face provides infinitely more reliable ML hosting).*
+## 🧠 Inference Pipeline
 
----
+- Upload image through Gradio UI.
+- Features are extracted via `utils/preprocessing.py` (`extract_features`).
+- The app tries to load:
+  - `model/ann_model.h5` + `model/scaler.pkl`, or
+  - `model/ann_model.pkl` + `model/scaler.pkl`
+- If model files are missing, a fallback ANN-like model and scaler are created automatically so the demo still works.
+- Output includes:
+  - **Risk Level** (`Low Risk (Benign)` / `High Risk (Possible Malignant)`)
+  - **Confidence** (`xx.xx%`)
 
-## 🧠 Project Overview
-Detecting skin cancer early saves lives. This project demonstrates a complete, production-ready AI pipeline: 
-1. **Feature Extraction**: Processing images from the clinical HAM10000 Skin Cancer Dataset to extract rich tabular features (Color means, Standard deviations, RGB histograms, and Canny edge densities).
-2. **Model Training**: A highly-optimized dense Artificial Neural Network (ANN) built from scratch using Keras/TensorFlow.
-3. **Inference & UI**: A modern, responsive, glassmorphic web interface built in Flask to serve the model's predictions in real-time.
+## 🛠️ Run Locally
 
-## ⚙️ Model Architecture & Performance
-The core engine is a Keras Sequential Deep Neural Network architected for advanced tabular feature analysis:
-- **Input Features**: 31 extracted color & texture dimensions normalized via StandardScaler.
-- **Hidden Layers**: 
-  - Dense (128 units, ReLU)
-  - Dense (64 units, ReLU)
-  - Dense (32 units, ReLU)
-  - Dropout Layer (0.3 rate) applied for robust regularization.
-- **Output Layer**: Dense (1 unit, Sigmoid) acting as the binary classifier.
-- **Performance Evaluation**: Successfully achieved **~82.3% Validation Accuracy** using the Adam Optimizer and Binary Crossentropy loss over 10,015 clinical images.
+```bash
+pip install -r requirements.txt
+python app/app.py
+```
 
-## 🛠️ Technology Stack
-- **Artificial Intelligence**: Python, TensorFlow, Keras, Scikit-Learn, Pandas, NumPy, OpenCV
-- **Backend Infrastructure**: Flask, Werkzeug
-- **Frontend UI/UX**: HTML5, Vanilla CSS3 (Glassmorphism aesthetics), Javascript, Phosphor Icons
+Then open: `http://127.0.0.1:7860`
