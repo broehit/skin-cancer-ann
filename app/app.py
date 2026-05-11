@@ -24,13 +24,14 @@ SCALER_PATH = os.path.join(MODEL_DIR, "scaler.pkl")
 model = None
 scaler = None
 model_kind = ""
-FEATURE_COUNT = len(extract_features(np.zeros((128, 128, 3), dtype=np.uint8)))
+FEATURE_COUNT = 37
 
 
 def _build_fallback_model_and_scaler():
     rng = np.random.default_rng(42)
     synthetic_x = rng.normal(0, 1, size=(512, FEATURE_COUNT))
-    synthetic_y = (synthetic_x[:, 0] + 0.6 * synthetic_x[:, 10] - 0.5 * synthetic_x[:, 20] > 0).astype(int)
+    synthetic_coefficients = rng.normal(0, 1, size=FEATURE_COUNT)
+    synthetic_y = (synthetic_x @ synthetic_coefficients > 0).astype(int)
 
     fallback_scaler = StandardScaler()
     synthetic_x_scaled = fallback_scaler.fit_transform(synthetic_x)
@@ -64,8 +65,8 @@ def load_model_and_scaler():
 
             loaded_model = keras_load_model(MODEL_H5_PATH)
             return loaded_model, loaded_scaler, "keras"
-        except Exception:
-            pass
+        except (ImportError, OSError, ValueError, TypeError, pickle.UnpicklingError) as error:
+            print(f"Failed to load Keras model from {MODEL_H5_PATH}: {error}")
 
     return _build_fallback_model_and_scaler()
 
