@@ -65,7 +65,7 @@ def load_model_and_scaler():
 
             loaded_model = keras_load_model(MODEL_H5_PATH)
             return loaded_model, loaded_scaler, "keras"
-        except (ImportError, OSError, ValueError, TypeError) as error:
+        except (ImportError, OSError, ValueError) as error:
             print(f"Failed to load Keras model from {MODEL_H5_PATH}: {error}")
 
     return _build_fallback_model_and_scaler()
