@@ -24,7 +24,7 @@ SCALER_PATH = os.path.join(MODEL_DIR, "scaler.pkl")
 model = None
 scaler = None
 model_kind = ""
-FEATURE_COUNT = 37
+FEATURE_COUNT = len(extract_features(np.zeros((128, 128, 3), dtype=np.uint8)))
 
 
 def _build_fallback_model_and_scaler():
@@ -65,7 +65,7 @@ def load_model_and_scaler():
 
             loaded_model = keras_load_model(MODEL_H5_PATH)
             return loaded_model, loaded_scaler, "keras"
-        except (ImportError, OSError, ValueError, TypeError, pickle.UnpicklingError) as error:
+        except (ImportError, OSError, ValueError, TypeError) as error:
             print(f"Failed to load Keras model from {MODEL_H5_PATH}: {error}")
 
     return _build_fallback_model_and_scaler()
