@@ -9,8 +9,8 @@ pinned: false
 ---
 
 <p align="center">
-  <a href="https://huggingface.co/spaces/Broehit/skin-cancer-ann">
-    <img src="https://img.shields.io/badge/🚀 Live%20Demo-Hugging%20Face-yellow?style=for-the-badge">
+  <a href="https://huggingface.co/spaces/Broehit/skin-cancer-ann-v2">
+    <img src="https://img.shields.io/badge/🚀%20Live%20Demo-Hugging%20Face%20Spaces-blue?style=for-the-badge">
   </a>
 </p>
 
@@ -21,27 +21,28 @@ pinned: false
 </div>
 <br/>
 
+## 🚀 Quick Start
+
+Click the button above to try the live classifier with our modern, tech-gradient UI!
+
 ## ✅ Deployment Status
 
-The application now runs on **Gradio** and is ready for Hugging Face Spaces deployment without requiring missing Flask templates or mandatory pre-saved model files.
+The application now runs on **Flask** with a custom modern UI and is deployed on **Hugging Face Spaces** with a beautiful glassmorphism design and gradient styling.
 
-## 🌐 Hugging Face Spaces Deployment
+## 🌐 Live Deployment
 
-### Option 1: Gradio SDK (recommended)
-1. Create a new Hugging Face Space.
-2. Select **Gradio** SDK.
-3. Push this repository.
-4. Hugging Face will launch `app/app.py` automatically.
+**Live URL:** https://huggingface.co/spaces/Broehit/skin-cancer-ann-v2
 
-### Option 2: Docker SDK
-1. Create a new Hugging Face Space.
-2. Select **Docker** SDK.
-3. Push this repository.
-4. Hugging Face builds from `Dockerfile` and exposes port `7860`.
+The app features:
+- 🎨 Modern glassmorphism UI with gradient backgrounds
+- 📸 Drag-and-drop image upload
+- ⚡ Real-time AI predictions
+- 📊 Confidence score with progress visualization
+- 🎯 Risk level classification with color-coded results
 
 ## 🧠 Inference Pipeline
 
-- Upload image through Gradio UI.
+- Upload image through the custom web UI.
 - Features are extracted via `utils/preprocessing.py` (`extract_features`).
 - The app tries to load:
   - `model/ann_model.h5` + `model/scaler.pkl`, or
@@ -55,7 +56,29 @@ The application now runs on **Gradio** and is ready for Hugging Face Spaces depl
 
 ```bash
 pip install -r requirements.txt
-python app/app.py
+python app.py
 ```
 
-Then open: `http://127.0.0.1:7860`
+Then open: `http://127.0.0.1:5000`
+
+## 📁 Project Structure
+
+```
+skin-cancer-ann/
+├── app.py                 # Flask application
+├── requirements.txt       # Python dependencies
+├── Dockerfile            # Container configuration
+├── templates/
+│   └── index.html        # Custom UI template
+├── static/
+│   └── style.css         # Modern styling
+└── utils/
+    └── preprocessing.py  # Feature extraction
+```
+
+## 🔧 Tech Stack
+
+- **Backend:** Flask, scikit-learn
+- **Frontend:** HTML5, CSS3 (Glassmorphism, Gradients)
+- **Model:** Artificial Neural Network (sklearn MLPClassifier)
+- **Deployment:** Hugging Face Spaces
