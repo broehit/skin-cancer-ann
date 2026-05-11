@@ -14,6 +14,8 @@ sys.path.append(BASE_DIR)
 
 from utils.preprocessing import extract_features
 
+# Feature count is fixed based on preprocessing logic
+FEATURE_COUNT = 31
 
 MODEL_DIR = os.path.join(BASE_DIR, "model")
 MODEL_H5_PATH = os.path.join(MODEL_DIR, "ann_model.h5")
@@ -24,7 +26,6 @@ SCALER_PATH = os.path.join(MODEL_DIR, "scaler.pkl")
 model = None
 scaler = None
 model_kind = ""
-FEATURE_COUNT = len(extract_features(np.zeros((128, 128, 3), dtype=np.uint8)))
 
 
 def _build_fallback_model_and_scaler():
