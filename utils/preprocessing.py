@@ -10,7 +10,7 @@ def extract_features(image_input):
     Args:
         image_input (str or numpy.ndarray): Path to the image or loaded image array.
     Returns:
-        numpy.ndarray: 1D array of extracted features.
+        numpy.ndarray: 1D array of extracted features (31 features).
     """
     # Load image if input is a path
     if isinstance(image_input, str):
@@ -29,24 +29,55 @@ def extract_features(image_input):
     
     features = []
     
-    # 1. Image Color Statistics (Mean and Std for B, G, R)
+    # 1. Image Color Statistics (Mean and Std for B, G, R) = 6 features
     b, g, r = cv2.split(img_resized)
     features.extend([np.mean(b), np.std(b), np.mean(g), np.std(g), np.mean(r), np.std(r)])
     
-    # 2. HSV Color Statistics (Mean and Std for H, S, V) over the image
+    # 2. HSV Color Statistics (Mean and Std for H, S, V) = 6 features
     h, s, v = cv2.split(hsv_img)
     features.extend([np.mean(h), np.std(h), np.mean(s), np.std(s), np.mean(v), np.std(v)])
     
-    # 3. Color Histograms (Flattened, 8 bins per channel B,G,R)
+    # 3. Color Histograms (4 bins per channel B,G,R) = 12 features
     for channel in (b, g, r):
-        hist = cv2.calcHist([channel], [0], None, [8], [0, 256])
+        hist = cv2.calcHist([channel], [0], None, [4], [0, 256])
         features.extend(hist.flatten())
         
-    # 4. Simple Edge/Texture Feature (Canny edge density)
+    # 4. Texture Features
+    # 4a. Edge density (Canny) = 1 feature
     edges = cv2.Canny(gray_img, 100, 200)
     edge_density = np.sum(edges > 0) / (128 * 128)
     features.append(edge_density)
-
+    
+    # 4b. Laplacian variance = 1 feature
+    laplacian = cv2.Laplacian(gray_img, cv2.CV_64F)
+    laplacian_var = np.var(laplacian)
+    features.append(laplacian_var)
+    
+    # 4c. Contrast = 1 feature
+    contrast = np.std(gray_img)
+    features.append(contrast)
+    
+    # 4d. Brightness = 1 feature
+    brightness = np.mean(gray_img)
+    features.append(brightness)
+    
+    # 4e. Entropy-like measure = 1 feature
+    hist_gray = cv2.calcHist([gray_img], [0], None, [256], [0, 256])
+    hist_gray = hist_gray.flatten() / hist_gray.sum()
+    entropy = -np.sum(hist_gray * np.log2(hist_gray + 1e-10))
+    features.append(entropy)
+    
+    # Total: 6 + 6 + 12 + 1 + 1 + 1 + 1 + 1 = 29 features so far
+    # Add 2 more for padding
+    
+    # 5. Saturation metrics
+    saturation_mean = np.mean(s)
+    saturation_std = np.std(s)
+    features.extend([saturation_mean, saturation_std])
+    
+    # Total = 31 features
+    assert len(features) == 31, f"Expected 31 features, got {len(features)}"
+    
     return np.array(features)
 
 def create_tabular_dataset(metadata_csv, images_dir, output_csv):
